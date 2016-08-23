@@ -4,6 +4,9 @@ var lettersDiv = document.getElementById('letters');
 var guessesDiv = document.getElementById('guesses');
 var secretWord = "";
 var blanks = "";
+//var wrongGuesses made/edited by: Matthew Segraves
+var wrongGuesses = 0;
+var rightGuesses = 0;
 
 /**
  * Initializes a new game.
@@ -58,9 +61,50 @@ function guessLetter(elm) {
   // TODO: Determine if the letter is in the secret word,
   // if so, reveal it in the secretWordDiv, otherwise
   // add a part to our hangman
-
+  var flag = true;
+  for(i=0; i<secretWord.length; i++)
+  {
+    if(secretWord.charAt(i).toUpperCase() == letter)
+    {
+      var firstHalf = blanks.substr(0,i);
+      var secondHalf = blanks.substr(i+1,blanks.length-1);
+      blanks = firstHalf + letter + secondHalf;
+      rightGuesses++;
+      flag = false;
+    }
+  }
+  drawBlanks();
+  if(flag)
+  {
+    wrongGuesses++;
+    drawStickMan(wrongGuesses);
+  }
   // TODO: Determine if the game is over, and if so,
   // let the player know if they have won or lost
+  if(wrongGuesses == 6 || rightGuesses == secretWord.length)
+  {
+    if(wrongGuesses == 6)
+    {
+      wordDiv.innerHTML = "<p>The word was: " + secretWord + "</p>";
+      lettersDiv.innerHTML = "";
+      guessesDiv.innerHTML = "";
+      var type = document.createElement("h1");
+      var text = document.createTextNode("Game Over - Player Lost");
+      type.appendChild(text);
+      var textAt = document.getElementById("word");
+      textAt.appendChild(type);
+    }
+    else
+    {
+      lettersDiv.innerHTML = "";
+      guessesDiv.innerHTML = "";
+      var type = document.createElement("h1");
+      var text = document.createTextNode("Game Over - Player Won");
+      type.appendChild(text);
+      var textAt = document.getElementById("word");
+      textAt.appendChild(type);
+    }
+  }
 }
 
 /**
